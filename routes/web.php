@@ -1,6 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Models\Message;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,7 +20,26 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/about', function(){
-    
-    return view('about');
+Route::get('/about', function () {
+   
+    $messages = Message::all();
+    return view('about', ['messages' => $messages]);
+});
+
+// Laravel Inertia js way
+Route::get('/hello', function (){
+    return Inertia::render('Hello');
+});
+
+Route::get('/contact', function (){
+    $messages = Message::all();
+    return inertia('Contact',['messages'=>$messages]);
+});
+
+Route::post('/messages',function(Request $request){
+    $validated = $request->validate([
+        'text' =>'required|min:8'
+    ]);
+    Message::create($validated);
+    return redirect('/contact');
 });
